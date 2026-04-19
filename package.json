@@ -1,0 +1,11 @@
+{
+  "name": "autocomplete-server",
+  "version": "1.0.0",
+  "type": "module",
+  "dependencies": {
+    "cheerio": "1.0.0-rc.12",
+    "cors": "^2.8.6",
+    "express": "^4.22.1",
+    "node-fetch": "3.3.2"
+  }
+}
