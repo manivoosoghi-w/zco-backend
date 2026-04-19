@@ -82,20 +82,24 @@ function fallbackEstimate(distanceKm) {
   };
 }
 
-// ⭐ TON PROXY CLOUDFLARE
-const PROXY = "https://sweet-sunset-2827.manivoosoghi.workers.dev/?url=";
+/* ===============================
+   ⭐ PROXY QUI FONCTIONNE
+================================ */
+const PROXY = "https://api.allorigins.win/raw?url=";
 
-// VIA MICHELIN
+/* ===============================
+   VIA MICHELIN
+================================ */
 async function fetchViaMichelin(from, to) {
   try {
     const url = `https://www.viamichelin.fr/web/Itineraires?departure=${encodeURIComponent(from)}&arrival=${encodeURIComponent(to)}&type=1`;
 
-    const html = await (await fetch(PROXY + encodeURIComponent(url))).text();
+    const html = await fetch(PROXY + encodeURIComponent(url)).then(r => r.text());
     const $ = cheerio.load(html);
 
     const tollText =
-      $('div[class*="summary"] span:contains("péage")').first().text().trim() ||
-      $('span.toll').first().text().trim();
+      $('span:contains("péage")').first().text().trim() ||
+      $('span:contains("Péage")').first().text().trim();
 
     const toll = parseEuro(tollText);
     if (toll !== null) return { toll, source: "ViaMichelin" };
@@ -107,12 +111,14 @@ async function fetchViaMichelin(from, to) {
   }
 }
 
-// MAPPY
+/* ===============================
+   MAPPY
+================================ */
 async function fetchMappy(from, to) {
   try {
     const url = `https://fr.mappy.com/itineraire#/voiture/${encodeURIComponent(from)}/${encodeURIComponent(to)}`;
 
-    const html = await (await fetch(PROXY + encodeURIComponent(url))).text();
+    const html = await fetch(PROXY + encodeURIComponent(url)).then(r => r.text());
     const $ = cheerio.load(html);
 
     const tollText =
@@ -129,7 +135,9 @@ async function fetchMappy(from, to) {
   }
 }
 
-// ROUTE PÉAGE
+/* ===============================
+   ROUTE PÉAGE
+================================ */
 app.get('/api/toll', async (req, res) => {
   try {
     const { from, to, distance } = req.query;
